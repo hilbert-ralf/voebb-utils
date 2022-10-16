@@ -1,0 +1,50 @@
+Charlottenburg-Wilmersdorf: Heinrich-Schulz-Bibliothek mit Musikabteilung
+Charlottenburg-Wilmersdorf: Dietrich-Bonhoeffer-Bibliothek
+Charlottenburg-Wilmersdorf: Ingeborg-Bachmann-Bibliothek
+Charlottenburg-Wilmersdorf: Johanna-Moosdorf-Bibliothek
+Charlottenburg-Wilmersdorf: Stadtteilbibliothek Halemweg
+Charlottenburg-Wilmersdorf: Adolf-Reichwein-Bibliothek
+Friedrichshain-Kreuzberg: Bezirkszentralbibliothek Pablo Neruda
+Friedrichshain-Kreuzberg: Mittelpunktbibliothek Wilhelm Liebknecht / Namik Kemal
+Friedrichshain-Kreuzberg: Stadtteilbibliothek Friedrich von Raumer
+Lichtenberg: Anna-Seghers-Bibliothek
+Lichtenberg: Anton-Saefkow-Bibliothek
+Lichtenberg: Bodo-Uhse-Bibliothek
+Marzahn-Hellersdorf: Bezirkszentralbibliothek Mark Twain
+Marzahn-Hellersdorf: Mittelpunktbibliothek Ehm Welk
+Marzahn-Hellersdorf: Stadtteilbibliothek Kaulsdorf - Nord
+Marzahn-Hellersdorf: Stadtteilbibliothek Mahlsdorf
+Mitte: Philipp-Schaeffer-Bibliothek
+Mitte: Bibliothek am Luisenbad
+Mitte: Schiller-Bibliothek mit @hugo Jugendmedienetage
+Mitte: Bruno-Loesche-Bibliothek
+Mitte: Hansabibliothek
+Mitte: Kurt-Tucholsky-Bibliothek (Mitte)
+Mitte: Bibliothek Tiergarten Süd
+Neukoelln: Helene-Nathan-Bibliothek
+Neukoelln: Gertrud-Junge-Bibliothek
+Pankow: Heinrich-Böll-Bibliothek
+Pankow: Janusz-Korczak-Bibliothek
+Pankow: Wolfdietrich-Schnurre-Bibliothek
+Pankow: Bibliothek am Wasserturm
+Pankow: Kurt-Tucholsky-Bibliothek (Pankow)
+Pankow: Bibliothek Karow
+Reinickendorf: Humboldt-Bibliothek
+Reinickendorf: Bibl. Reinickendorf - West
+Reinickendorf: Bibliothek Märkisches Viertel
+Reinickendorf: Bibliothek Frohnau
+Spandau: Hauptbibliothek Spandau
+Spandau: Stadtteilbibliothek Haselhorst
+Steglitz-Zehlendorf: Ingeborg-Drewitz-Bibliothek
+Steglitz-Zehlendorf: Gottfried-Benn-Bibliothek
+Steglitz-Zehlendorf: Stadtteilbibliothek Lankwitz
+Tempelhof-Schoeneberg: Bezirkszentralbibliothek Tempelhof-Schöneberg
+Tempelhof-Schoeneberg: Mittelpunktbibliothek Schöneberg
+Tempelhof-Schoeneberg: Stadtteilbibliothek Lichtenrade
+Tempelhof-Schoeneberg: Stadtteilbibliothek Marienfelde
+Tempelhof-Schoeneberg: Thomas-Dehler-Bibliothek
+Treptow-Koepenick: Mittelpunktbibliothek Treptow Alte Feuerwache
+Treptow-Koepenick: Stadtteilbibliothek Adlershof Stefan Heym
+Treptow-Koepenick: Fahrbibliothek Treptow-Köpenick
+ZLB: Amerika-Gedenkbibliothek (AGB)
+ZLB: Berliner Stadtbibliothek (BStB)
