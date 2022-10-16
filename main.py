@@ -1,9 +1,5 @@
 import requests
-from requests_html import HTMLSession
-from bs4 import BeautifulSoup
-from lxml import etree
 import pandas
-import sys
 import logging
 
 if __name__ == '__main__':
