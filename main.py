@@ -1,12 +1,21 @@
+import configparser
 import logging
+import smtplib
+import ssl
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 
 import pandas
 import requests
 from tabulate import tabulate
 
+# initialize config
+config = configparser.ConfigParser()
+config.read('config.ini')
+
 
 def main():
-    logging.basicConfig(level=logging.INFO)
+    logging.basicConfig(level=logging.getLevelName(config['DEFAULT']['LoggingLevel']))
 
     f = open('medienliste.txt', 'r')
     mediums = f.readlines()
@@ -32,8 +41,6 @@ def main():
 
         logging.info(medium)
 
-        # url = 'https://www.voebb.de//aDISWeb/app?service=direct/0/Home/$DirectLink&sp=SPROD00&sp=SAK34841213'
-        # 'https://www.voebb.de//aDISWeb/app?service=direct/0/Home/$DirectLink&sp=SPROD00&sp=SAK34896410'
         url = 'https://www.voebb.de//aDISWeb/app?service=direct/0/Home/$DirectLink&sp=SPROD00&sp=SAK{}'.format(medium)
 
         response = requests.get(url)
@@ -71,7 +78,8 @@ def main():
                 found_in_libraries_count += 1
                 library_entry = big_table.loc[big_table['Bibliothek'] == library]
                 if "Verfügbar" in library_entry['Verfügbarkeit'].values:
-                    location = library + ' -> ' + library_entry['Standort'].values[0] + ' -> ' + library_entry['Signatur'].values[0]
+                    location = library + ' -> ' + library_entry['Standort'].values[0] + ' -> ' + \
+                               library_entry['Signatur'].values[0]
                     logging.debug("In Bibliothek {} vorhanden und zu finden bei: {}".format(library, str(location)))
                     available_results.append([medium, location, title, url])
                 else:
@@ -82,18 +90,100 @@ def main():
         if found_in_libraries_count == 0:
             non_available_results.append([medium, title, url])
 
-    logging.warning("Folgende Medien sind aktuell verfügbar:")
-    logging.info(tabulate(available_results,
-                          headers=["ID", "ORT", "TITEL", "DIREKTLINK"],
-                          tablefmt="grid",
-                          maxcolwidths=[None, 35, 35, None]))
-
     if len(non_available_results) > 0:
         logging.warning("Folgende Medien sind in keiner der gewählten Bibliotheken vorhanden:")
-        logging.info(tabulate(non_available_results,
-                              headers=["ID", "TITEL", "DIREKTLINK"],
-                              tablefmt="grid",
-                              maxcolwidths=[None, 35, None]))
+        logging.info(generate_non_available_table(non_available_results, 'grid'))
+
+    logging.info("Folgende Medien sind aktuell verfügbar:")
+    logging.info(generate_avalable_table(available_results, 'grid'))
+
+    if 'Mailing' in config:
+        logging.info("Mailversand ist aktiviert und wird vorbereitet")
+        send_result_via_mail(available_results, non_available_results)
+    else:
+        logging.debug("Mailversand nicht konfiguriert")
+
+
+def send_result_via_mail(available_results, non_available_results):
+    non_available_table_html = None
+    non_available_table_plain = None
+    if len(non_available_results) > 0:
+        non_available_table_html = generate_non_available_table(non_available_results, 'html')
+        non_available_table_plain = generate_non_available_table(non_available_results, 'grid')
+    style = """
+    table, th, td {
+      border: 1px solid;
+      padding: 10px;
+      text-align: left;
+    }
+    
+    table {
+      border-collapse: collapse;
+    }
+    tr:nth-child(even) {background-color: #f2f2f2;}
+    """
+    mail_content_html = """
+    <html>
+      <head>
+        <style>
+        {}
+        </style>
+      </head>
+      <body>
+        Folgende Medien sind aktuell verfügbar:
+        {}
+    
+        Folgende Medien sind in keiner der gewählten Bibliotheken vorhanden:
+        {}
+      </body>
+    </html>
+    """.format(style, generate_avalable_table(available_results, 'html'), non_available_table_html)
+    mail_content_plain = """
+    Folgende Medien sind aktuell verfügbar:
+    {}
+
+    Folgende Medien sind in keiner der gewählten Bibliotheken vorhanden:
+    {}
+    """.format(generate_avalable_table(available_results, 'grid'), non_available_table_plain)
+
+    sender_email = config['Mailing']['User']
+    password = config['Mailing']['Password']
+    # Create a secure SSL context
+    context = ssl.create_default_context()
+    with smtplib.SMTP(config['Mailing']['SmtpServerAddress'], int(config['Mailing']['SmtpServerPort'])) as server:
+        server.starttls(context=context)
+        server.login(sender_email, password)
+
+        recipient_mails = config['Mailing']['Recipients'].split(',')
+
+        msg = MIMEMultipart('alternative')
+        msg['Subject'] = "Neuigkeiten von deiner voebb-wunschliste"
+        msg['From'] = sender_email
+
+        part1 = MIMEText(mail_content_plain, 'plain')
+        part2 = MIMEText(mail_content_html, 'html')
+        msg.attach(part1)
+        msg.attach(part2)
+
+        server.sendmail(sender_email, recipient_mails, msg.as_string())
+        logging.info("Mail erfolgrteich versand an {}".format(recipient_mails))
+
+
+def generate_non_available_table(non_available_results, type):
+    non_available_table = tabulate(non_available_results,
+                                   headers=["ID", "TITEL", "DIREKTLINK"],
+                                   tablefmt=type,
+                                   maxcolwidths=[None, 35, None])
+    return non_available_table
+
+
+def generate_avalable_table(available_results, type):
+    available_table = tabulate(available_results,
+                               headers=["ID", "ORT", "TITEL", "DIREKTLINK"],
+                               tablefmt=type,
+                               maxcolwidths=[None, 35, 35, None])
+    return available_table
+
 
 if __name__ == '__main__':
     main()
