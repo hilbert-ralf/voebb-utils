@@ -2,6 +2,7 @@ import configparser
 import logging
 import smtplib
 import ssl
+import sys
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
@@ -13,15 +14,13 @@ from tabulate import tabulate
 config = configparser.ConfigParser()
 config.read('config.ini')
 
+# initialize logging
+logging.basicConfig(level=logging.getLevelName(config['DEFAULT']['LoggingLevel']))
 
-def main():
-    logging.basicConfig(level=logging.getLevelName(config['DEFAULT']['LoggingLevel']))
 
-    f = open('medienliste.txt', 'r')
-    mediums = f.readlines()
-
-    f = open('standortliste.txt', 'r')
-    libraries = f.readlines()
+def main(path_mediums_list):
+    mediums = open(path_mediums_list, 'r').readlines()
+    libraries = open('standortliste.txt', 'r').readlines()
 
     logging.info(
         "Verfügbarkeit von {} Medien wird in {} Bibliotheken geprüft".format(len(mediums), len(libraries)))
@@ -39,12 +38,14 @@ def main():
 
     for medium in mediums:
 
-        logging.info(medium)
+        logging.info("Prüfe Medium {}".format(medium))
 
-        url = 'https://www.voebb.de//aDISWeb/app?service=direct/0/Home/$DirectLink&sp=SPROD00&sp=SAK{}'.format(medium)
+        sak_id = medium.split(",")[0]
+
+        url = 'https://www.voebb.de//aDISWeb/app?service=direct/0/Home/$DirectLink&sp=SPROD00&sp=SAK{}'.format(sak_id)
 
         response = requests.get(url)
-        logging.debug('responsecode from {}: {}'.format(url, response))
+        logging.debug('response code from {}: {}'.format(url, response))
 
         # todo add check if response code is 200
 
@@ -166,7 +167,7 @@ def send_result_via_mail(available_results, non_available_results):
         msg.attach(part2)
 
         server.sendmail(sender_email, recipient_mails, msg.as_string())
-        logging.info("Mail erfolgrteich versand an {}".format(recipient_mails))
+        logging.info("Mail erfolgreich versand an {}".format(recipient_mails))
 
 
 def generate_non_available_table(non_available_results, type):
@@ -186,4 +187,9 @@ def generate_avalable_table(available_results, type):
 
 
 if __name__ == '__main__':
-    main()
+    file_path = "medienliste.txt"
+    # sys.argv[0] is set by thew name of the script itself
+    if len(sys.argv) == 2:
+        file_path = sys.argv[1]
+
+    main(file_path)

@@ -62,6 +62,18 @@ Process finished with exit code 0
 
 ## HowTo
 
+### Script ausführen
+
+#### Vorbedingungen
+
+* pipreqs installieren: `pip install pipreqs`
+* Abhängigkeiten installieren `pip install -r requirements.txt`
+
+#### Ausführung
+
+* `python3 main.py` (nutzt die Dateien medienliste.txt sowie standortliste.txt)
+* `python3 main.py andere-medien.txt` (nutzt die Dateien andere-medien.txt sowie standortliste.txt)
+
 ### Bibliotheksliste pflegen
 
 * standortliste-full.txt mit allen Standorten öffnen
@@ -73,7 +85,7 @@ Process finished with exit code 0
 * Medium über die [voebb-Seite](https://www.voebb.de/aDISWeb/app?service=direct/0/Home/$DirectLink&sp=SPROD00) suchen
 * Zitierlink ermitteln ![](./doc/voebb-search.png)
 * ID des Mediums kopieren ![](./doc/sak-id.png)
-* ID zu medienliste.txt hinzufügen. (eine ID pro Zeile erleubt)
+* ID zu medienliste.txt hinzufügen. (eine ID pro Zeile erlaubt, optional können auch Kommentare hinter einem Komma hinterlegt werden - wie in der Beispieldatei)
 
 ### Mail Versand konfigurieren
 
