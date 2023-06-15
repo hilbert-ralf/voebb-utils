@@ -81,7 +81,6 @@ def main(path_mediums_list):
                 library_entry = big_table.loc[big_table['Bibliothek'] == library]
                 logging.debug("columns found: {}".format(library_entry.columns))
                 if "Verfügbar" in library_entry['Verfügbarkeit'].values:
-                    # logging.debug("library_entry['Signatur'].values[0]: {}".format(library_entry['Signatur'].values[0]))
                     location = library + ' -> ' + library_entry['Standort'].values[0]
                     if 'Signatur' in library_entry.columns:
                         location += ' -> ' + library_entry['Signatur'].values[0]
