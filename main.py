@@ -15,7 +15,8 @@ config = configparser.ConfigParser()
 config.read('config.ini')
 
 # initialize logging
-logging.basicConfig(level=logging.getLevelName(config['DEFAULT']['LoggingLevel']))
+logging.basicConfig(level=logging.getLevelName(config['DEFAULT']['LoggingLevel']),
+                    format='%(asctime)s - %(levelname)s - %(message)s')
 
 
 def main(path_mediums_list):
@@ -23,7 +24,7 @@ def main(path_mediums_list):
     libraries = open('standortliste.txt', 'r').readlines()
 
     logging.info(
-        "Verfügbarkeit von {} Medien wird in {} Bibliotheken geprüft".format(len(mediums), len(libraries)))
+        "Verfügbarkeit von {} Medien wird in {} Bibliotheken geprüft ...".format(len(mediums), len(libraries)))
 
     # removing newlines
     for library in libraries:
@@ -50,14 +51,14 @@ def main(path_mediums_list):
         # todo add check if response code is 200
 
         if len(pandas.read_html(response.text)) < 2:
-            logging.warning("Tabelle mit verfügbarkeiten nicht gefunden.")
+            logging.warning("Tabelle mit verfügbarkeiten nicht gefunden. Medium '{}' wird übersprungen".format(medium))
             continue
 
         big_table = pandas.read_html(response.text)[1]
 
         if not (
                 "Bibliothek" in big_table.columns and "Standort" in big_table.columns and "Verfügbarkeit" in big_table.columns):
-            logging.warning("Tabelle mit verfügbarkeiten nicht gefunden.")
+            logging.warning("Tabelle mit verfügbarkeiten nicht gefunden. Medium {} wird übersprungen".format(medium))
             continue
 
         logging.debug("Tabelle mit verfügbarkeiten gefunden:")
@@ -78,9 +79,13 @@ def main(path_mediums_list):
             if library in big_table['Bibliothek'].values:
                 found_in_libraries_count += 1
                 library_entry = big_table.loc[big_table['Bibliothek'] == library]
+                logging.debug("columns found: {}".format(library_entry.columns))
                 if "Verfügbar" in library_entry['Verfügbarkeit'].values:
-                    location = library + ' -> ' + library_entry['Standort'].values[0] + ' -> ' + \
-                               library_entry['Signatur'].values[0]
+                    # logging.debug("library_entry['Signatur'].values[0]: {}".format(library_entry['Signatur'].values[0]))
+                    location = library + ' -> ' + library_entry['Standort'].values[0]
+                    if 'Signatur' in library_entry.columns:
+                        location += ' -> ' + library_entry['Signatur'].values[0]
+
                     logging.debug("In Bibliothek {} vorhanden und zu finden bei: {}".format(library, str(location)))
                     available_results.append([medium, location, title, url])
                 else:
@@ -95,8 +100,7 @@ def main(path_mediums_list):
         logging.warning("Folgende Medien sind in keiner der gewählten Bibliotheken vorhanden:")
         logging.info(generate_non_available_table(non_available_results, 'grid'))
 
-    logging.info("Folgende Medien sind aktuell verfügbar:")
-    logging.info(generate_avalable_table(available_results, 'grid'))
+    logging.info('Folgende Medien sind aktuell verfügbar:\n' + generate_avalable_table(available_results, 'grid'))
 
     if 'Mailing' in config:
         logging.info("Mailversand ist aktiviert und wird vorbereitet")
