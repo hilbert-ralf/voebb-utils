@@ -89,7 +89,7 @@ Process finished with exit code 0
 
 ### Mail Versand konfigurieren
 
-* Datei `config.ini` mit Texteditor
+* Datei `config.ini` mit Texteditor editieren
 * Folgendende Zeilen adaptiert hinzufügen:
 ```ini
 [Mailing]

@@ -35,6 +35,7 @@ def main(path_mediums_list):
         mediums[mediums.index(medium)] = medium.replace('\n', '')
 
     available_results = []
+    tmp_non_available_results = []
     non_available_results = []
 
     for medium in mediums:
@@ -89,6 +90,7 @@ def main(path_mediums_list):
                     available_results.append([medium, location, title, url])
                 else:
                     logging.debug("In Bibliothek {} vorhanden aber nicht verügbar".format(library))
+                    tmp_non_available_results.append([medium, library_entry['Verfügbarkeit'].values[0], title, url])
             else:
                 logging.debug("Bibliothek {} hat dieses Medium nicht.".format(library))
 
@@ -99,16 +101,20 @@ def main(path_mediums_list):
         logging.warning("Folgende Medien sind in keiner der gewählten Bibliotheken vorhanden:")
         logging.info(generate_non_available_table(non_available_results, 'grid'))
 
-    logging.info('Folgende Medien sind aktuell verfügbar:\n' + generate_avalable_table(available_results, 'grid'))
+    logging.info('Folgende Medien sind aktuell verfügbar:\n' + generate_medium_table(available_results, 'grid', "ORT"))
+    logging.info('\n\n\n')
+    logging.info(
+        'Folgende Medien sind gelistet aber verliehen:\n' + generate_medium_table(tmp_non_available_results, 'grid',
+                                                                                  "Fälligkeit"))
 
     if 'Mailing' in config:
         logging.info("Mailversand ist aktiviert und wird vorbereitet")
-        send_result_via_mail(available_results, non_available_results)
+        send_result_via_mail(available_results, tmp_non_available_results, non_available_results)
     else:
         logging.debug("Mailversand nicht konfiguriert")
 
 
-def send_result_via_mail(available_results, non_available_results):
+def send_result_via_mail(available_results, tmp_non_available_results, non_available_results):
     non_available_table_html = None
     non_available_table_plain = None
     if len(non_available_results) > 0:
@@ -136,19 +142,30 @@ def send_result_via_mail(available_results, non_available_results):
       <body>
         Folgende Medien sind aktuell verfügbar:
         {}
+        
+        Folgende Medien sind gelistet aber verliehen:
+        {}
     
         Folgende Medien sind in keiner der gewählten Bibliotheken vorhanden:
         {}
       </body>
     </html>
-    """.format(style, generate_avalable_table(available_results, 'html'), non_available_table_html)
+    """.format(style,
+               generate_medium_table(available_results, 'html', "ORT"),
+               generate_medium_table(tmp_non_available_results, 'grid', "Fälligkeit"),
+               non_available_table_html)
     mail_content_plain = """
     Folgende Medien sind aktuell verfügbar:
+    {}
+    
+    Folgende Medien sind gelistet aber verliehen:
     {}
 
     Folgende Medien sind in keiner der gewählten Bibliotheken vorhanden:
     {}
-    """.format(generate_avalable_table(available_results, 'grid'), non_available_table_plain)
+    """.format(generate_medium_table(available_results, 'grid', "ORT"),
+               generate_medium_table(tmp_non_available_results, 'grid', "Fälligkeit"),
+               non_available_table_plain)
 
     sender_email = config['Mailing']['User']
     password = config['Mailing']['Password']
@@ -181,9 +198,9 @@ def generate_non_available_table(non_available_results, type):
     return non_available_table
 
 
-def generate_avalable_table(available_results, type):
+def generate_medium_table(available_results, type, availability):
     available_table = tabulate(available_results,
-                               headers=["ID", "ORT", "TITEL", "DIREKTLINK"],
+                               headers=["ID", availability, "TITEL", "DIREKTLINK"],
                                tablefmt=type,
                                maxcolwidths=[None, 35, 35, None])
     return available_table
