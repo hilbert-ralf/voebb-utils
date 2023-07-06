@@ -152,7 +152,7 @@ def send_result_via_mail(available_results, tmp_non_available_results, non_avail
     </html>
     """.format(style,
                generate_medium_table(available_results, 'html', "ORT"),
-               generate_medium_table(tmp_non_available_results, 'grid', "Fälligkeit"),
+               generate_medium_table(tmp_non_available_results, 'html', "Fälligkeit"),
                non_available_table_html)
     mail_content_plain = """
     Folgende Medien sind aktuell verfügbar:
