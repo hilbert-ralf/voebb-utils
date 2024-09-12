@@ -37,7 +37,7 @@ public class MyCommands {
             List<String> mediumLines = Files.readAllLines(Paths.get(mediumsPath));
             List<String> libraries = Files.readAllLines(Paths.get(librariesPath));
 
-            log.info("Checking availability of {} mediumLines in {} libraries...", mediumLines.size(), libraries.size());
+            log.info("Checking availability of {} mediumLines ({}) in {} libraries ({}) ...", mediumLines.size(), mediumsPath, libraries.size(), librariesPath);
 
             ArrayList<Medium> mediums = new ArrayList<>();
 
@@ -64,6 +64,7 @@ public class MyCommands {
             log.info(printableMediums);
 
             if (MAIL_DELIVERY_ENABLED) {
+                log.info("desired mail delivery recognised, will proceed with mail delivery");
                 emailService.sendSimpleMessage(printableMediums);
             }
 
@@ -131,8 +132,12 @@ public class MyCommands {
             }
         }
 
-        return available.append("\n")
-                .append(notAvailable).append("\n")
-                .append(notInLibraries).toString();
+        return available
+                .append("\n")
+                .append(notAvailable)
+                .append("\n")
+                .append(notInLibraries)
+                .append("\n\n")
+                .toString();
     }
 }
