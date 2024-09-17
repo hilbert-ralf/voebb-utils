@@ -116,11 +116,12 @@ public class MyCommands {
                 }
             }
 
-            String entry = String.format("%d. %s %s\n\n",
+            String entry = String.format("%d. %s (%s) %s\n",
                     !medium.getAvailableWantedLibraries().isEmpty() ? availableCount++ :
                             !medium.getUnavailableWantedLibraries().isEmpty() ? notAvailableCount++ :
                                     notInLibrariesCount++,
                     medium.getTitleCustom() == null ? medium.getTitle() : medium.getTitleCustom(),
+                    medium.getDirectLink(),
                     location);
 
             if (!medium.getAvailableWantedLibraries().isEmpty()) {

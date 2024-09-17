@@ -11,6 +11,7 @@ public class Medium {
     private String titleCustom;
     private String title;
     private boolean physicallyFound;
+    private String directLink;
     private List<Location> availableWantedLibraries = new ArrayList<>();
     private List<Location> unavailableWantedLibraries = new ArrayList<>();
 }

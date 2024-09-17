@@ -22,6 +22,8 @@ public class VoebbCrawler {
         RestTemplate restTemplate = new RestTemplate();
         String url = URL_MEDIUM + sakId;
 
+        medium.setDirectLink(url);
+
         log.info("crawl for sakId: " + sakId);
         String response = restTemplate.getForObject(url, String.class);
 
